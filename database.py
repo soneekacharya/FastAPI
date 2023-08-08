@@ -1,12 +1,10 @@
 import sqlite3
 from models import Employee
 
-conn = sqlite3.connect("data.db")
+conn = sqlite3.connect("data.db", check_same_thread=False)
 cursor = conn.cursor()
 
 def create_table():
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
     try:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS employees (
@@ -21,8 +19,6 @@ def create_table():
 
 
 def get_employees(skip: int, limit: int):
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
     try:
         cursor.execute("SELECT * FROM employees LIMIT ? OFFSET ?", (limit, skip))
         rows = cursor.fetchall()
@@ -33,8 +29,6 @@ def get_employees(skip: int, limit: int):
 
 
 def get_employee(employee_id: int):
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
     try:
         cursor.execute("SELECT * FROM employees WHERE id = ?", (employee_id,))
         row = cursor.fetchone()
@@ -47,8 +41,6 @@ def get_employee(employee_id: int):
 
 
 def insert_employee(employee: Employee):
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
     try:
         cursor.execute("INSERT INTO employees (name, department) VALUES (?, ?)", (employee.name, employee.department))
         conn.commit()
@@ -58,8 +50,6 @@ def insert_employee(employee: Employee):
 
 
 def delete_employee(employee_id: int):
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
     try:
         cursor.execute("DELETE FROM employees WHERE id = ?", (employee_id,))
         conn.commit()
@@ -68,8 +58,6 @@ def delete_employee(employee_id: int):
         conn.close()
 
 def update_employee(employee_id: int, column: str, new_value: str):
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
     try:
         cursor.execute(f"UPDATE employees SET {column} = ? WHERE id = ?", (new_value, employee_id))
         conn.commit()
